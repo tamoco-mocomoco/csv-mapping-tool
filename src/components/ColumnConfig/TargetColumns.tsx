@@ -220,7 +220,8 @@ export function TargetColumns() {
             value={columnName}
             onChange={(e) => setColumnName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
+              // IME変換中のEnterは無視
+              if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
                 handleSave();
               }
             }}

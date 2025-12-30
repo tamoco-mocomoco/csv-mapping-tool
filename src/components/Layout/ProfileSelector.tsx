@@ -313,7 +313,7 @@ export function ProfileSelector() {
             value={profileName}
             onChange={(e) => setProfileName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSaveConfirm();
+              if (e.key === 'Enter' && !e.nativeEvent.isComposing) handleSaveConfirm();
             }}
           />
         </DialogContent>
@@ -338,7 +338,7 @@ export function ProfileSelector() {
             value={profileName}
             onChange={(e) => setProfileName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') handleRenameConfirm();
+              if (e.key === 'Enter' && !e.nativeEvent.isComposing) handleRenameConfirm();
             }}
           />
         </DialogContent>

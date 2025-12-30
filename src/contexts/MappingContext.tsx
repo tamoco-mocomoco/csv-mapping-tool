@@ -28,6 +28,7 @@ interface MappingContextType {
   setSourceData: (data: Record<string, string>[]) => void;
 
   // Mapping actions
+  setMappings: (mappings: Mapping[]) => void;
   addMapping: () => void;
   updateMapping: (id: string, updates: Partial<Mapping>) => void;
   removeMapping: (id: string) => void;
@@ -346,6 +347,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
       setTargetColumns,
       reorderTargetColumns,
       setSourceData,
+      setMappings,
       addMapping,
       updateMapping,
       removeMapping,
@@ -377,6 +379,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
       removeTargetColumn,
       setTargetColumns,
       reorderTargetColumns,
+      setMappings,
       addMapping,
       updateMapping,
       removeMapping,

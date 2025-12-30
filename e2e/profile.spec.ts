@@ -8,9 +8,12 @@ const __dirname = path.dirname(__filename);
 
 test.describe('Profile Import/Export', () => {
   test.beforeEach(async ({ page }) => {
-    // LocalStorageをクリア
+    // LocalStorageをクリアし、ツアーをスキップ
     await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('csv-mapper-tour-completed', 'true');
+    });
     await page.reload();
   });
 

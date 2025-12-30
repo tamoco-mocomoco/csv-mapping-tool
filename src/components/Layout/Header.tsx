@@ -1,9 +1,14 @@
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, Tooltip } from '@mui/material';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useMappingContext } from '../../contexts/MappingContext';
 import { ProfileSelector } from './ProfileSelector';
 
-export function Header() {
+interface HeaderProps {
+  onStartTour?: () => void;
+}
+
+export function Header({ onStartTour }: HeaderProps) {
   const { resetAll } = useMappingContext();
 
   const handleReset = () => {
@@ -19,7 +24,9 @@ export function Header() {
           CSV マッピングツール
         </Typography>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <ProfileSelector />
+          <Box data-tour="profile">
+            <ProfileSelector />
+          </Box>
           <Button
             color="inherit"
             startIcon={<RestartAltIcon />}
@@ -27,6 +34,13 @@ export function Header() {
           >
             リセット
           </Button>
+          {onStartTour && (
+            <Tooltip title="使い方ガイド">
+              <IconButton color="inherit" onClick={onStartTour}>
+                <HelpOutlineIcon />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
       </Toolbar>
     </AppBar>
