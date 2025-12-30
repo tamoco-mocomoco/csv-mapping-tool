@@ -22,9 +22,23 @@ CSV ファイルのカラムを別のフォーマットに変換したい場面�
 
 https://github.com/tamoco-mocomoco/csv-mapping-tool
 
-## 作ったもの
+**デモサイト:** https://tamoco-mocomoco.github.io/csv-mapping-tool/
 
-![CSV Mapping Tool](/images/csv-mapping-tool-preview.png)
+## 作ったもの：スクリーンショット
+
+### カラムの設定
+
+![](https://storage.googleapis.com/zenn-user-upload/311bc1985eb4-20251229.png)
+
+### マッピングの設定
+
+![](https://storage.googleapis.com/zenn-user-upload/fd14c0f8b219-20251229.png)
+
+### 変換前後のプレビュー
+
+![](https://storage.googleapis.com/zenn-user-upload/18b18ce37333-20251229.png)
+
+![](https://storage.googleapis.com/zenn-user-upload/403f26db9b00-20251229.png)
 
 ### 主な機能
 
