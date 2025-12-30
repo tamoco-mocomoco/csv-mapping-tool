@@ -16,6 +16,7 @@ export function SplitConfig({ config, onChange }: SplitConfigProps) {
         onChange={(e) => onChange({ ...config, delimiter: e.target.value })}
         sx={{ width: 100 }}
         placeholder="例: スペース"
+        data-testid="split-delimiter-input"
       />
       <TextField
         size="small"
@@ -25,6 +26,7 @@ export function SplitConfig({ config, onChange }: SplitConfigProps) {
         onChange={(e) => onChange({ ...config, index: parseInt(e.target.value) || 0 })}
         sx={{ width: 100 }}
         inputProps={{ min: 0 }}
+        data-testid="split-index-input"
       />
     </Box>
   );

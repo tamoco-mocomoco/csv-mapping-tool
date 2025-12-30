@@ -15,6 +15,7 @@ export function SuffixConfig({ config, onChange }: SuffixConfigProps) {
       onChange={(e) => onChange({ ...config, suffix: e.target.value })}
       placeholder="例: 様、円"
       sx={{ minWidth: 120 }}
+      data-testid="suffix-value-input"
     />
   );
 }

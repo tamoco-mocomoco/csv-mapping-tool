@@ -16,6 +16,7 @@ export function CaseConfig({ config, onChange }: CaseConfigProps) {
         onChange={(e) =>
           onChange({ ...config, caseType: e.target.value as CaseType })
         }
+        data-testid="case-type-select"
       >
         <MenuItem value="upper">大文字</MenuItem>
         <MenuItem value="lower">小文字</MenuItem>

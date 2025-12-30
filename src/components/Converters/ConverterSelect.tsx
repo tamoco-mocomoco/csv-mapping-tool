@@ -62,6 +62,7 @@ export function ConverterSelect({ config, onChange }: ConverterSelectProps) {
           value={config.type}
           label="コンバーター"
           onChange={(e) => handleTypeChange(e.target.value as ConverterType)}
+          data-testid="converter-type-select"
         >
           <MenuItem value="direct">そのまま</MenuItem>
           <MenuItem value="split">分割</MenuItem>

@@ -33,6 +33,7 @@ export function PrefixConfig({ config, onChange }: PrefixConfigProps) {
           value={config.fixedPrefix || ''}
           onChange={(e) => onChange({ ...config, fixedPrefix: e.target.value })}
           sx={{ width: 120 }}
+          data-testid="prefix-value-input"
         />
       )}
 

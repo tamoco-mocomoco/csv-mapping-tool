@@ -48,7 +48,7 @@ export function MappingRow({
   const converters = mapping.converters || [{ type: 'direct' as const }];
 
   return (
-    <Paper sx={{ p: 2, mb: 2 }} variant="outlined">
+    <Paper sx={{ p: 2, mb: 2 }} variant="outlined" data-testid="mapping-row">
       <Box
         sx={{
           display: 'flex',
@@ -65,6 +65,7 @@ export function MappingRow({
             value={validSourceId}
             label="変換元"
             onChange={(e) => onUpdate({ sourceColumnId: e.target.value })}
+            data-testid="source-column-select"
           >
             {sourceColumns.map((col) => (
               <MenuItem key={col.id} value={col.id}>
@@ -85,6 +86,7 @@ export function MappingRow({
             value={validTargetId}
             label="変換先"
             onChange={(e) => onUpdate({ targetColumnId: e.target.value })}
+            data-testid="target-column-select"
           >
             {targetColumns.map((col) => (
               <MenuItem key={col.id} value={col.id}>
@@ -108,7 +110,7 @@ export function MappingRow({
           <Typography variant="body2" color="text.secondary">
             コンバーター
           </Typography>
-          <IconButton size="small" onClick={onAddConverter} color="primary">
+          <IconButton size="small" onClick={onAddConverter} color="primary" data-testid="add-converter-button">
             <AddIcon fontSize="small" />
           </IconButton>
         </Box>
@@ -116,6 +118,7 @@ export function MappingRow({
         {converters.map((converter, index) => (
           <Box
             key={index}
+            data-testid={`converter-row-${index}`}
             sx={{
               display: 'flex',
               gap: 1,
