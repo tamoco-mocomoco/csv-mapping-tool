@@ -8,11 +8,15 @@ import {
   Paper,
   Typography,
   Chip,
+  Checkbox,
+  ListItemText,
+  TextField,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AddIcon from '@mui/icons-material/Add';
 import type { Mapping, Column, ConverterConfig } from '../../types';
+import { getSourceColumnIds } from '../../types';
 import { ConverterSelect } from '../Converters/ConverterSelect';
 
 interface MappingRowProps {
@@ -36,10 +40,12 @@ export function MappingRow({
   onRemoveConverter,
   onRemove,
 }: MappingRowProps) {
-  // 有効なIDかチェックし、無効なら空文字にフォールバック
-  const validSourceId = sourceColumns.some((col) => col.id === mapping.sourceColumnId)
-    ? mapping.sourceColumnId
-    : '';
+  // sourceColumnIds を取得（後方互換性対応）
+  const sourceIds = getSourceColumnIds(mapping);
+  // 有効なIDのみをフィルタリング
+  const validSourceIds = sourceIds.filter((id) =>
+    sourceColumns.some((col) => col.id === id)
+  );
   const validTargetId = targetColumns.some((col) => col.id === mapping.targetColumnId)
     ? mapping.targetColumnId
     : '';
@@ -58,22 +64,58 @@ export function MappingRow({
           mb: 2,
         }}
       >
-        {/* 変換元カラム */}
-        <FormControl size="small" sx={{ minWidth: 150 }}>
+        {/* 変換元カラム（複数選択可能） */}
+        <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel>変換元</InputLabel>
           <Select
-            value={validSourceId}
+            multiple
+            value={validSourceIds}
             label="変換元"
-            onChange={(e) => onUpdate({ sourceColumnId: e.target.value })}
+            onChange={(e) => {
+              const value = e.target.value as string[];
+              onUpdate({
+                sourceColumnIds: value,
+                sourceColumnId: undefined, // 旧形式をクリア
+              });
+            }}
             data-testid="source-column-select"
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {(selected as string[]).map((id) => {
+                  const col = sourceColumns.find((c) => c.id === id);
+                  return (
+                    <Chip
+                      key={id}
+                      label={col?.name || id}
+                      size="small"
+                      sx={{ height: 20 }}
+                    />
+                  );
+                })}
+              </Box>
+            )}
           >
             {sourceColumns.map((col) => (
               <MenuItem key={col.id} value={col.id}>
-                {col.name}
+                <Checkbox checked={validSourceIds.includes(col.id)} size="small" />
+                <ListItemText primary={col.name} />
               </MenuItem>
             ))}
           </Select>
         </FormControl>
+
+        {/* 複数選択時のみ区切り文字入力を表示 */}
+        {validSourceIds.length > 1 && (
+          <TextField
+            size="small"
+            label="区切り文字"
+            value={mapping.separator ?? ''}
+            onChange={(e) => onUpdate({ separator: e.target.value })}
+            sx={{ width: 100 }}
+            placeholder="例: スペース"
+            data-testid="separator-input"
+          />
+        )}
 
         <Box sx={{ display: 'flex', alignItems: 'center', pt: 1 }}>
           <ArrowForwardIcon color="action" />

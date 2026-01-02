@@ -51,9 +51,9 @@ test.describe('Complex CSV Conversions', () => {
       // 最初のマッピング設定
       const firstMapping = page.locator('[data-testid="mapping-row"]').first();
 
-      // 変換元: 氏名、変換先: 姓
-      await firstMapping.locator('[data-testid="source-column-select"]').click();
-      await page.getByRole('option', { name: '氏名' }).click();
+      // 変換元: 氏名は既にデフォルトで選択済み、変換先: 姓
+      // 注: 新規マッピングは自動的に最初の変換元カラムを選択するため、
+      //     同じカラムをクリックするとトグルで選択解除されてしまう
       await firstMapping.locator('[data-testid="target-column-select"]').click();
       await page.getByRole('option', { name: '姓' }).click();
 
@@ -74,8 +74,7 @@ test.describe('Complex CSV Conversions', () => {
 
       const secondMapping = page.locator('[data-testid="mapping-row"]').nth(1);
 
-      await secondMapping.locator('[data-testid="source-column-select"]').click();
-      await page.getByRole('option', { name: '氏名' }).click();
+      // 変換元: 氏名は既にデフォルトで選択済み、変換先: 名
       await secondMapping.locator('[data-testid="target-column-select"]').click();
       await page.getByRole('option', { name: '名' }).click();
 
@@ -135,8 +134,7 @@ test.describe('Complex CSV Conversions', () => {
 
       const mappingCard = page.locator('[data-testid="mapping-row"]').first();
 
-      await mappingCard.locator('[data-testid="source-column-select"]').click();
-      await page.getByRole('option', { name: 'メール' }).click();
+      // 変換元: メールは既にデフォルトで選択済み、変換先: 正規化メール
       await mappingCard.locator('[data-testid="target-column-select"]').click();
       await page.getByRole('option', { name: '正規化メール' }).click();
 
@@ -205,8 +203,7 @@ test.describe('Complex CSV Conversions', () => {
 
         const mapping = page.locator('[data-testid="mapping-row"]').nth(i);
 
-        await mapping.locator('[data-testid="source-column-select"]').click();
-        await page.getByRole('option', { name: '日付' }).click();
+        // 変換元: 日付は既にデフォルトで選択済み、変換先: target.name
         await mapping.locator('[data-testid="target-column-select"]').click();
         await page.getByRole('option', { name: target.name }).click();
 
@@ -264,8 +261,7 @@ clothing`;
 
       const mappingCard = page.locator('[data-testid="mapping-row"]').first();
 
-      await mappingCard.locator('[data-testid="source-column-select"]').click();
-      await page.getByRole('option', { name: 'カテゴリ' }).click();
+      // 変換元: カテゴリは既にデフォルトで選択済み、変換先: 商品コード
       await mappingCard.locator('[data-testid="target-column-select"]').click();
       await page.getByRole('option', { name: '商品コード' }).click();
 
@@ -294,6 +290,62 @@ clothing`;
       await expect(previewTable.locator('td').filter({ hasText: 'PRD-FOOD-JP' }).first()).toBeVisible();
       await expect(previewTable.locator('td').filter({ hasText: 'PRD-ELECTRONICS-JP' }).first()).toBeVisible();
       await expect(previewTable.locator('td').filter({ hasText: 'PRD-CLOTHING-JP' }).first()).toBeVisible();
+
+    } finally {
+      if (fs.existsSync(csvPath)) {
+        fs.unlinkSync(csvPath);
+      }
+    }
+  });
+
+  test('5. 複数カラム結合（姓 + 名 → 氏名）', async ({ page }) => {
+    const csvContent = `姓,名
+田中,太郎
+鈴木,花子`;
+    const csvPath = path.join(__dirname, 'test-merge.csv');
+    fs.writeFileSync(csvPath, csvContent);
+
+    try {
+      // 変換前カラムのインポート
+      const sourceFileInput = page.locator('[data-tour="source-columns"] input[type="file"]');
+      await sourceFileInput.setInputFiles(csvPath);
+      await page.waitForTimeout(500);
+
+      // 変換後カラムを追加
+      await page.locator('[data-tour="target-columns"]').getByRole('button', { name: 'カラム追加' }).click();
+      await page.getByRole('textbox', { name: 'カラム名' }).fill('氏名');
+      await page.getByRole('button', { name: '保存' }).click();
+
+      // CSVデータをインポート
+      const dataFileInput = page.locator('[data-tour="data-import"] input[type="file"]');
+      await dataFileInput.setInputFiles(csvPath);
+      await page.waitForTimeout(500);
+
+      // マッピングを追加
+      await page.getByRole('button', { name: 'マッピング追加' }).click();
+      await page.waitForTimeout(500);
+
+      const mappingCard = page.locator('[data-testid="mapping-row"]').first();
+
+      // 変換元: 姓は既にデフォルトで選択済み、名を追加選択
+      await mappingCard.locator('[data-testid="source-column-select"]').click();
+      await page.getByRole('option', { name: '名' }).click(); // 名を追加（姓は既に選択済み）
+      await page.keyboard.press('Escape'); // 複数選択ドロップダウンを閉じる
+
+      // 区切り文字を設定（複数選択時に表示される）
+      await mappingCard.locator('[data-testid="separator-input"] input').fill(' ');
+
+      // 変換先: 氏名
+      await mappingCard.locator('[data-testid="target-column-select"]').click();
+      await page.getByRole('option', { name: '氏名' }).click();
+
+      // 変換後タブで結果を確認
+      await page.getByRole('tab', { name: '変換後' }).click();
+      await page.waitForTimeout(300);
+
+      const previewTable = page.locator('[data-tour="preview"]').locator('table');
+      await expect(previewTable.locator('td').filter({ hasText: '田中 太郎' }).first()).toBeVisible();
+      await expect(previewTable.locator('td').filter({ hasText: '鈴木 花子' }).first()).toBeVisible();
 
     } finally {
       if (fs.existsSync(csvPath)) {

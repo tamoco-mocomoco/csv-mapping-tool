@@ -51,9 +51,22 @@ export interface ConverterConfig {
 // マッピング定義
 export interface Mapping {
   id: string;
-  sourceColumnId: string;
+  sourceColumnId?: string;       // 旧形式（後方互換性用）
+  sourceColumnIds?: string[];    // 新形式（複数カラム対応）
   targetColumnId: string;
   converters: ConverterConfig[]; // 複数コンバーターをパイプライン形式で適用
+  separator?: string;            // 結合時の区切り文字（デフォルト: ''）
+}
+
+// マッピングからソースカラムIDの配列を取得するヘルパー関数（後方互換性対応）
+export function getSourceColumnIds(mapping: Mapping): string[] {
+  if (mapping.sourceColumnIds && mapping.sourceColumnIds.length > 0) {
+    return mapping.sourceColumnIds;
+  }
+  if (mapping.sourceColumnId) {
+    return [mapping.sourceColumnId];
+  }
+  return [];
 }
 
 // アプリケーション状態

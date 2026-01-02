@@ -1,4 +1,5 @@
 import type { Mapping, Column, ConverterConfig } from '../types';
+import { getSourceColumnIds } from '../types';
 import { applyConverter, clearRandomCache } from '../converters';
 
 // 複数コンバーターをパイプライン形式で適用
@@ -31,11 +32,18 @@ export function transformData(
 
     // マッピングを適用
     mappings.forEach((mapping) => {
-      const sourceColumn = sourceColumns.find((c) => c.id === mapping.sourceColumnId);
+      const sourceIds = getSourceColumnIds(mapping);
       const targetColumn = targetColumns.find((c) => c.id === mapping.targetColumnId);
 
-      if (sourceColumn && targetColumn) {
-        const sourceValue = row[sourceColumn.id] || '';
+      if (sourceIds.length > 0 && targetColumn) {
+        // 複数カラムの値を取得して結合
+        const sourceValue = sourceIds
+          .map((id) => {
+            const col = sourceColumns.find((c) => c.id === id);
+            return col ? (row[col.id] || '') : '';
+          })
+          .join(mapping.separator ?? '');
+
         // 複数コンバーターをパイプライン形式で適用
         const converters = mapping.converters || [{ type: 'direct' as const }];
         const convertedValue = applyConverters(sourceValue, converters, rowIndex);

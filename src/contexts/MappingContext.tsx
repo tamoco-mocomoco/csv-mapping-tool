@@ -112,7 +112,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
   const addMapping = useCallback(() => {
     const newMapping: Mapping = {
       id: `mapping_${Date.now()}`,
-      sourceColumnId: sourceColumns[0]?.id || '',
+      sourceColumnIds: sourceColumns[0]?.id ? [sourceColumns[0].id] : [],
       targetColumnId: targetColumns[0]?.id || '',
       converters: [{ ...defaultConverterConfig }],
     };
@@ -156,7 +156,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
       if (matchingSource) {
         newMappings.push({
           id: `mapping_${Date.now()}_${newMappings.length}`,
-          sourceColumnId: matchingSource.id,
+          sourceColumnIds: [matchingSource.id],
           targetColumnId: targetCol.id,
           converters: [{ ...defaultConverterConfig }],
         });

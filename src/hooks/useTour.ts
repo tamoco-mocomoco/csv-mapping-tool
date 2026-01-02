@@ -22,7 +22,7 @@ function createSampleMappings(sourceColumns: Column[], targetColumns: Column[]):
   if (srcName && tgtLastName) {
     mappings.push({
       id: `mapping_${now}_1`,
-      sourceColumnId: srcName.id,
+      sourceColumnIds: [srcName.id],
       targetColumnId: tgtLastName.id,
       converters: [{ type: 'split', delimiter: ' ', index: 0 } as ConverterConfig],
     });
@@ -31,7 +31,7 @@ function createSampleMappings(sourceColumns: Column[], targetColumns: Column[]):
   if (srcName && tgtFirstName) {
     mappings.push({
       id: `mapping_${now}_2`,
-      sourceColumnId: srcName.id,
+      sourceColumnIds: [srcName.id],
       targetColumnId: tgtFirstName.id,
       converters: [{ type: 'split', delimiter: ' ', index: 1 } as ConverterConfig],
     });
@@ -40,7 +40,7 @@ function createSampleMappings(sourceColumns: Column[], targetColumns: Column[]):
   if (srcEmail && tgtEmail) {
     mappings.push({
       id: `mapping_${now}_3`,
-      sourceColumnId: srcEmail.id,
+      sourceColumnIds: [srcEmail.id],
       targetColumnId: tgtEmail.id,
       converters: [{ type: 'case', caseType: 'lower' } as ConverterConfig],
     });
@@ -49,7 +49,7 @@ function createSampleMappings(sourceColumns: Column[], targetColumns: Column[]):
   if (srcPhone && tgtPhone) {
     mappings.push({
       id: `mapping_${now}_4`,
-      sourceColumnId: srcPhone.id,
+      sourceColumnIds: [srcPhone.id],
       targetColumnId: tgtPhone.id,
       converters: [{ type: 'replace', searchValue: '-', replaceValue: '' } as ConverterConfig],
     });
