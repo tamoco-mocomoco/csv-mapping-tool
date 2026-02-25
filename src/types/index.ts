@@ -69,6 +69,14 @@ export function getSourceColumnIds(mapping: Mapping): string[] {
   return [];
 }
 
+// データフィルター
+export interface DataFilter {
+  enabled: boolean;
+  columnType: 'source' | 'target';  // 変換前 or 変換後
+  columnId: string;                  // 対象カラムID
+  pattern: string;                   // 正規表現パターン
+}
+
 // アプリケーション状態
 export interface MappingState {
   sourceColumns: Column[];
@@ -88,6 +96,7 @@ export interface Profile {
   targetColumns: Column[];
   mappings: Mapping[];
   encoding?: CsvEncoding;
+  dataFilter?: DataFilter;
   createdAt: number;
   updatedAt: number;
 }
@@ -107,4 +116,6 @@ export const STORAGE_KEYS = {
   MAPPINGS: 'csv-mapper-mappings',
   PROFILES: 'csv-mapper-profiles',
   CURRENT_PROFILE_ID: 'csv-mapper-current-profile-id',
+  ENCODING: 'csv-mapper-encoding',
+  DATA_FILTER: 'csv-mapper-data-filter',
 } as const;

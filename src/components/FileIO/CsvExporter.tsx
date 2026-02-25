@@ -3,9 +3,10 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { generateCSV, downloadCSV } from '../../utils/csv';
 import { useMappingContext } from '../../contexts/MappingContext';
 import { transformData } from '../../utils/transform';
+import { applyDataFilter } from '../Preview/DataPreview';
 
 export function CsvExporter() {
-  const { sourceData, mappings, sourceColumns, targetColumns } = useMappingContext();
+  const { sourceData, mappings, sourceColumns, targetColumns, dataFilter } = useMappingContext();
 
   const handleExport = () => {
     if (sourceData.length === 0) {
@@ -19,7 +20,8 @@ export function CsvExporter() {
     }
 
     const transformedData = transformData(sourceData, mappings, sourceColumns, targetColumns);
-    const csvString = generateCSV(transformedData, targetColumns);
+    const { filteredTransformed } = applyDataFilter(sourceData, transformedData, dataFilter);
+    const csvString = generateCSV(filteredTransformed, targetColumns);
     downloadCSV(csvString, 'converted.csv');
   };
 

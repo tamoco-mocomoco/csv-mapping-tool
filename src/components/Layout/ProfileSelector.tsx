@@ -124,6 +124,7 @@ export function ProfileSelector() {
       targetColumns: profile.targetColumns,
       mappings: profile.mappings,
       encoding: profile.encoding,
+      dataFilter: profile.dataFilter,
     };
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
       type: 'application/json',
@@ -166,6 +167,7 @@ export function ProfileSelector() {
         targetColumns: data.targetColumns,
         mappings: data.mappings,
         encoding: data.encoding,
+        dataFilter: data.dataFilter,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       };
