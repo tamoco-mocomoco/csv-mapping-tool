@@ -88,4 +88,56 @@ describe('dateFormatConverter', () => {
     };
     expect(dateFormatConverter('30/11/2024', config)).toBe('2024-11-30');
   });
+
+  // 月オフセットのテスト
+  it('should subtract 1 month with dateOffsetMonths=-1', () => {
+    const config: ConverterConfig = {
+      type: 'dateFormat',
+      dateInputFormat: 'YYYY/MM/DD',
+      dateOutputFormat: 'YYYY-MM-DD',
+      dateOffsetMonths: -1,
+    };
+    expect(dateFormatConverter('2024/03/15', config)).toBe('2024-02-15');
+  });
+
+  it('should handle year boundary when subtracting months', () => {
+    const config: ConverterConfig = {
+      type: 'dateFormat',
+      dateInputFormat: 'YYYY/MM/DD',
+      dateOutputFormat: 'YYYY-MM-DD',
+      dateOffsetMonths: -1,
+    };
+    expect(dateFormatConverter('2024/01/15', config)).toBe('2023-12-15');
+  });
+
+  it('should clamp day to last day of target month', () => {
+    const config: ConverterConfig = {
+      type: 'dateFormat',
+      dateInputFormat: 'YYYY/MM/DD',
+      dateOutputFormat: 'YYYY-MM-DD',
+      dateOffsetMonths: -1,
+    };
+    // 3月31日 → 2月は29日まで（2024年はうるう年）
+    expect(dateFormatConverter('2024/03/31', config)).toBe('2024-02-29');
+  });
+
+  it('should add months with positive offset', () => {
+    const config: ConverterConfig = {
+      type: 'dateFormat',
+      dateInputFormat: 'YYYY/MM/DD',
+      dateOutputFormat: 'YYYY-MM-DD',
+      dateOffsetMonths: 2,
+    };
+    expect(dateFormatConverter('2024/11/15', config)).toBe('2025-01-15');
+  });
+
+  it('should not change date when offset is 0', () => {
+    const config: ConverterConfig = {
+      type: 'dateFormat',
+      dateInputFormat: 'YYYY/MM/DD',
+      dateOutputFormat: 'YYYY-MM-DD',
+      dateOffsetMonths: 0,
+    };
+    expect(dateFormatConverter('2024/03/15', config)).toBe('2024-03-15');
+  });
 });

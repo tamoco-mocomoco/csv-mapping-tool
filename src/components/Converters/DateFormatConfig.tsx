@@ -27,6 +27,17 @@ export function DateFormatConfig({ config, onChange }: DateFormatConfigProps) {
         sx={{ minWidth: 180 }}
         data-testid="date-output-format"
       />
+      <TextField
+        size="small"
+        label="月オフセット"
+        type="number"
+        value={config.dateOffsetMonths ?? 0}
+        onChange={(e) => onChange({ ...config, dateOffsetMonths: parseInt(e.target.value, 10) || 0 })}
+        placeholder="0"
+        sx={{ width: 100 }}
+        data-testid="date-offset-months"
+        helperText="例: -1 で1ヶ月前"
+      />
     </>
   );
 }

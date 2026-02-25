@@ -54,6 +54,7 @@ export interface ConverterConfig {
   // 日付フォーマット用
   dateInputFormat?: string;
   dateOutputFormat?: string;
+  dateOffsetMonths?: number;
 }
 
 // マッピング定義
