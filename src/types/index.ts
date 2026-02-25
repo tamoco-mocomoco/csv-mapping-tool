@@ -5,7 +5,7 @@ export interface Column {
 }
 
 // コンバーター種別
-export type ConverterType = 'direct' | 'split' | 'replace' | 'prefix' | 'suffix' | 'trim' | 'case' | 'substring' | 'padding';
+export type ConverterType = 'direct' | 'split' | 'replace' | 'prefix' | 'suffix' | 'trim' | 'case' | 'substring' | 'padding' | 'conditional' | 'dateFormat';
 
 // 接頭辞タイプ
 export type PrefixType = 'fixed' | 'random' | 'date';
@@ -46,6 +46,14 @@ export interface ConverterConfig {
   padType?: PadType;
   padChar?: string;
   padLength?: number;
+  // 条件代入用
+  conditionColumnId?: string;
+  conditionPattern?: string;
+  conditionValue?: string;
+  conditionElseValue?: string;
+  // 日付フォーマット用
+  dateInputFormat?: string;
+  dateOutputFormat?: string;
 }
 
 // マッピング定義

@@ -8,13 +8,17 @@ import { TrimConfig } from './TrimConfig';
 import { CaseConfig } from './CaseConfig';
 import { SubstringConfig } from './SubstringConfig';
 import { PaddingConfig } from './PaddingConfig';
+import { ConditionalConfig } from './ConditionalConfig';
+import { DateFormatConfig } from './DateFormatConfig';
+import type { Column } from '../../types';
 
 interface ConverterSelectProps {
   config: ConverterConfig;
   onChange: (config: ConverterConfig) => void;
+  sourceColumns?: Column[];
 }
 
-export function ConverterSelect({ config, onChange }: ConverterSelectProps) {
+export function ConverterSelect({ config, onChange, sourceColumns = [] }: ConverterSelectProps) {
   const handleTypeChange = (type: ConverterType) => {
     // タイプ変更時にデフォルト設定を適用
     const newConfig: ConverterConfig = { type };
@@ -49,6 +53,16 @@ export function ConverterSelect({ config, onChange }: ConverterSelectProps) {
         newConfig.padChar = '0';
         newConfig.padLength = 0;
         break;
+      case 'conditional':
+        newConfig.conditionColumnId = '';
+        newConfig.conditionPattern = '';
+        newConfig.conditionValue = '';
+        newConfig.conditionElseValue = '';
+        break;
+      case 'dateFormat':
+        newConfig.dateInputFormat = '';
+        newConfig.dateOutputFormat = '';
+        break;
     }
 
     onChange(newConfig);
@@ -73,6 +87,8 @@ export function ConverterSelect({ config, onChange }: ConverterSelectProps) {
           <MenuItem value="case">大文字/小文字</MenuItem>
           <MenuItem value="substring">部分抽出</MenuItem>
           <MenuItem value="padding">パディング</MenuItem>
+          <MenuItem value="conditional">条件代入</MenuItem>
+          <MenuItem value="dateFormat">日付フォーマット</MenuItem>
         </Select>
       </FormControl>
 
@@ -106,6 +122,14 @@ export function ConverterSelect({ config, onChange }: ConverterSelectProps) {
 
       {config.type === 'padding' && (
         <PaddingConfig config={config} onChange={onChange} />
+      )}
+
+      {config.type === 'conditional' && (
+        <ConditionalConfig config={config} onChange={onChange} sourceColumns={sourceColumns} />
+      )}
+
+      {config.type === 'dateFormat' && (
+        <DateFormatConfig config={config} onChange={onChange} />
       )}
     </Box>
   );

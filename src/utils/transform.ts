@@ -6,10 +6,11 @@ import { applyConverter, clearRandomCache } from '../converters';
 function applyConverters(
   value: string,
   converters: ConverterConfig[],
-  rowIndex: number
+  rowIndex: number,
+  row?: Record<string, string>
 ): string {
   return converters.reduce((currentValue, config) => {
-    return applyConverter(currentValue, config, rowIndex);
+    return applyConverter(currentValue, config, rowIndex, row);
   }, value);
 }
 
@@ -35,7 +36,11 @@ export function transformData(
       const sourceIds = getSourceColumnIds(mapping);
       const targetColumn = targetColumns.find((c) => c.id === mapping.targetColumnId);
 
-      if (sourceIds.length > 0 && targetColumn) {
+      if (!targetColumn) return;
+
+      const converters = mapping.converters || [{ type: 'direct' as const }];
+
+      if (sourceIds.length > 0) {
         // 複数カラムの値を取得して結合
         const sourceValue = sourceIds
           .map((id) => {
@@ -45,8 +50,12 @@ export function transformData(
           .join(mapping.separator ?? '');
 
         // 複数コンバーターをパイプライン形式で適用
-        const converters = mapping.converters || [{ type: 'direct' as const }];
-        const convertedValue = applyConverters(sourceValue, converters, rowIndex);
+        const convertedValue = applyConverters(sourceValue, converters, rowIndex, row);
+        transformedRow[targetColumn.id] = convertedValue;
+      } else {
+        // ソースカラム未選択: ターゲットの現在値を初期値としてコンバーターを適用
+        const currentValue = transformedRow[targetColumn.id] || '';
+        const convertedValue = applyConverters(currentValue, converters, rowIndex, row);
         transformedRow[targetColumn.id] = convertedValue;
       }
     });

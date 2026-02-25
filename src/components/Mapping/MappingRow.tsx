@@ -181,6 +181,7 @@ export function MappingRow({
             <ConverterSelect
               config={converter}
               onChange={(config) => onUpdateConverter(index, config)}
+              sourceColumns={sourceColumns}
             />
             {converters.length > 1 && (
               <IconButton

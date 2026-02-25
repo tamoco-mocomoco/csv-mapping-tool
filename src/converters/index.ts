@@ -7,6 +7,8 @@ import { trimConverter } from './trim';
 import { caseConverter } from './case';
 import { substringConverter } from './substring';
 import { paddingConverter } from './padding';
+import { conditionalConverter } from './conditional';
+import { dateFormatConverter } from './dateFormat';
 
 // そのままコピー
 function directConverter(value: string): string {
@@ -14,7 +16,12 @@ function directConverter(value: string): string {
 }
 
 // コンバーターを適用
-export function applyConverter(value: string, config: ConverterConfig, rowIndex?: number): string {
+export function applyConverter(
+  value: string,
+  config: ConverterConfig,
+  rowIndex?: number,
+  row?: Record<string, string>
+): string {
   switch (config.type) {
     case 'direct':
       return directConverter(value);
@@ -34,6 +41,10 @@ export function applyConverter(value: string, config: ConverterConfig, rowIndex?
       return substringConverter(value, config);
     case 'padding':
       return paddingConverter(value, config);
+    case 'conditional':
+      return conditionalConverter(value, config, row);
+    case 'dateFormat':
+      return dateFormatConverter(value, config);
     default:
       return value;
   }
@@ -60,6 +71,10 @@ export function getConverterLabel(type: string): string {
       return '部分抽出';
     case 'padding':
       return 'パディング';
+    case 'conditional':
+      return '条件代入';
+    case 'dateFormat':
+      return '日付フォーマット';
     default:
       return type;
   }
