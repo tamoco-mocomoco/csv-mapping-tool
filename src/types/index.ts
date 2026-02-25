@@ -77,6 +77,9 @@ export interface MappingState {
   sourceData: Record<string, string>[];
 }
 
+// CSVエンコーディング
+export type CsvEncoding = 'utf-8' | 'sjis';
+
 // プロファイル（設定の保存単位）
 export interface Profile {
   id: string;
@@ -84,6 +87,7 @@ export interface Profile {
   sourceColumns: Column[];
   targetColumns: Column[];
   mappings: Mapping[];
+  encoding?: CsvEncoding;
   createdAt: number;
   updatedAt: number;
 }

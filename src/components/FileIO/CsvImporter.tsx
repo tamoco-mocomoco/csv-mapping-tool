@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Button } from '@mui/material';
+import { Button, ToggleButtonGroup, ToggleButton, Box } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { parseCSV } from '../../utils/csv';
 import { useMappingContext } from '../../contexts/MappingContext';
@@ -12,7 +12,7 @@ interface CsvImporterProps {
 
 export function CsvImporter({ variant = 'small', mode = 'both', label }: CsvImporterProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { setSourceColumns, setSourceData } = useMappingContext();
+  const { setSourceColumns, setSourceData, encoding, setEncoding } = useMappingContext();
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -23,7 +23,7 @@ export function CsvImporter({ variant = 'small', mode = 'both', label }: CsvImpo
     if (!file) return;
 
     try {
-      const { columns, data } = await parseCSV(file);
+      const { columns, data } = await parseCSV(file, encoding);
       if (mode === 'columns' || mode === 'both') {
         setSourceColumns(columns);
       }
@@ -54,7 +54,16 @@ export function CsvImporter({ variant = 'small', mode = 'both', label }: CsvImpo
   };
 
   return (
-    <>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <ToggleButtonGroup
+        value={encoding}
+        exclusive
+        onChange={(_e, v) => { if (v) setEncoding(v); }}
+        size="small"
+      >
+        <ToggleButton value="utf-8">UTF-8</ToggleButton>
+        <ToggleButton value="sjis">SJIS</ToggleButton>
+      </ToggleButtonGroup>
       <input
         type="file"
         accept=".csv"
@@ -71,6 +80,6 @@ export function CsvImporter({ variant = 'small', mode = 'both', label }: CsvImpo
       >
         {getButtonLabel()}
       </Button>
-    </>
+    </Box>
   );
 }

@@ -123,6 +123,7 @@ export function ProfileSelector() {
       sourceColumns: profile.sourceColumns,
       targetColumns: profile.targetColumns,
       mappings: profile.mappings,
+      encoding: profile.encoding,
     };
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
       type: 'application/json',
@@ -164,6 +165,7 @@ export function ProfileSelector() {
         sourceColumns: data.sourceColumns,
         targetColumns: data.targetColumns,
         mappings: data.mappings,
+        encoding: data.encoding,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       };

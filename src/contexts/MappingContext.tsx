@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import type { Column, Mapping, ConverterConfig, Profile } from '../types';
+import type { Column, Mapping, ConverterConfig, Profile, CsvEncoding } from '../types';
 import { defaultConverterConfig, STORAGE_KEYS } from '../types';
 
 interface MappingContextType {
@@ -9,6 +9,7 @@ interface MappingContextType {
   targetColumns: Column[];
   mappings: Mapping[];
   sourceData: Record<string, string>[];
+  encoding: CsvEncoding;
 
   // Profile state
   profiles: Profile[];
@@ -26,6 +27,7 @@ interface MappingContextType {
 
   // Source data actions
   setSourceData: (data: Record<string, string>[]) => void;
+  setEncoding: (encoding: CsvEncoding) => void;
 
   // Mapping actions
   setMappings: (mappings: Mapping[]) => void;
@@ -78,6 +80,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
     null
   );
   const [sourceData, setSourceData] = React.useState<Record<string, string>[]>([]);
+  const [encoding, setEncoding] = React.useState<CsvEncoding>('utf-8');
 
   // Target columns actions
   const addTargetColumn = useCallback((name: string) => {
@@ -230,12 +233,13 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
       sourceColumns,
       targetColumns,
       mappings,
+      encoding,
       createdAt: now,
       updatedAt: now,
     };
     setProfiles((prev) => [...prev, newProfile]);
     setCurrentProfileId(newProfile.id);
-  }, [sourceColumns, targetColumns, mappings, setProfiles, setCurrentProfileId]);
+  }, [sourceColumns, targetColumns, mappings, encoding, setProfiles, setCurrentProfileId]);
 
   const loadProfile = useCallback((profileId: string) => {
     const profile = profiles.find((p) => p.id === profileId);
@@ -244,6 +248,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
     setSourceColumns(profile.sourceColumns);
     setTargetColumns(profile.targetColumns);
     setMappings(profile.mappings);
+    setEncoding(profile.encoding ?? 'utf-8');
     setCurrentProfileId(profileId);
     setSourceData([]); // CSVデータはリセット
   }, [profiles, setSourceColumns, setTargetColumns, setMappings, setCurrentProfileId]);
@@ -274,12 +279,13 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
               sourceColumns,
               targetColumns,
               mappings,
+              encoding,
               updatedAt: Date.now(),
             }
           : p
       )
     );
-  }, [currentProfileId, sourceColumns, targetColumns, mappings, setProfiles]);
+  }, [currentProfileId, sourceColumns, targetColumns, mappings, encoding, setProfiles]);
 
   const getProfileByName = useCallback(
     (name: string) => {
@@ -317,6 +323,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
       setSourceColumns(profile.sourceColumns);
       setTargetColumns(profile.targetColumns);
       setMappings(profile.mappings);
+      setEncoding(profile.encoding ?? 'utf-8');
       setCurrentProfileId(newProfileId);
       setSourceData([]);
     },
@@ -338,6 +345,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
       targetColumns,
       mappings,
       sourceData,
+      encoding,
       profiles,
       currentProfileId,
       setSourceColumns,
@@ -347,6 +355,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
       setTargetColumns,
       reorderTargetColumns,
       setSourceData,
+      setEncoding,
       setMappings,
       addMapping,
       updateMapping,
@@ -371,6 +380,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
       targetColumns,
       mappings,
       sourceData,
+      encoding,
       profiles,
       currentProfileId,
       setSourceColumns,
