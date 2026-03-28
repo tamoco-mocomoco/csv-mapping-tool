@@ -1,73 +1,79 @@
-# React + TypeScript + Vite
+# CSV Mapping Tool
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CSVファイルを読み込み、カラムのマッピングと変換処理を組み合わせて、必要な形式のCSVを出力するブラウザ完結型のデータ変換ツールです。
 
-Currently, two official plugins are available:
+## 特徴
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **ブラウザだけで完結** -- インストール不要、データは外部に送信されません
+- **UTF-8 / SJIS 対応** -- 日本語CSVもそのまま読み込めます
+- **11種類のコンバーター** -- 分割・置換・日付変換など、よく使う変換を網羅
+- **パイプライン形式** -- 複数のコンバーターを順番につなげて一括適用
+- **自動マッピング** -- カラム名が一致するものを自動で対応付け
+- **データフィルター** -- 正規表現で必要な行だけを抽出
+- **プロファイル保存** -- マッピング設定をブラウザに保存し、いつでも復元
+- **ドラッグ&ドロップ** -- カラムやコンバーターの並び順を直感的に変更
+- **ツアーガイド** -- 初めての方向けに操作手順を案内
 
-## React Compiler
+## デモ
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+以下のURLからすぐに試せます（GitHub Pages）:
 
-## Expanding the ESLint configuration
+https://tamoco-mocomoco.github.io/csv-mapping-tool/
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## クイックスタート（開発者向け）
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/tamoco-mocomoco/csv-mapping-tool.git
+cd csv-mapping-tool
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+ブラウザで `http://localhost:5173/csv-mapping-tool/` を開くと起動します。
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 使い方
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. **CSVを読み込む** -- 画面上部からCSVファイルを選択します。エンコーディング（UTF-8 / SJIS）を切り替えられます。
+2. **出力カラムを設定する** -- 出力先となるターゲットカラムを追加・編集します。
+3. **マッピングを設定する** -- ソースカラムとターゲットカラムを対応付け、必要に応じてコンバーターを追加します。自動マッピング機能を使うと、同名のカラムをまとめて対応付けできます。
+4. **データフィルターを設定する**（任意） -- 正規表現を使って、特定の条件に合う行だけを出力対象にできます。
+5. **プレビューで確認する** -- 変換結果を画面上で確認します。
+6. **CSVをエクスポートする** -- 変換済みデータをCSVファイルとしてダウンロードします。
+
+設定内容はプロファイルとして保存しておけば、次回以降は読み込むだけで同じ変換を再実行できます。
+
+## コンバーター一覧
+
+| コンバーター | 説明 | 設定例 |
+|---|---|---|
+| そのまま | 値をそのままコピーします | -- |
+| 分割 | 区切り文字で分割し、指定位置の要素を取得します | 区切り文字: `-`、取得位置: `0` |
+| 置換 | 文字列を検索して別の文字列に置き換えます | 検索: `株式会社` → 置換: `(株)` |
+| 接頭辞付与 | 先頭に固定文字列・ランダム文字列・日付を付加します | 固定値: `ID-` |
+| 接尾辞付与 | 末尾に固定文字列を付加します | 接尾辞: `@example.com` |
+| トリム | 前後の空白を除去します | 対象: 両端 / 先頭のみ / 末尾のみ |
+| 大文字/小文字 | 大文字・小文字・先頭大文字に変換します | 変換: `upper` / `lower` / `capitalize` |
+| 部分抽出 | 開始位置と終了位置を指定して部分文字列を取得します | 開始: `0`、終了: `3` |
+| パディング | 指定の長さになるまで文字を埋めます | 文字: `0`、長さ: `5`、方向: 先頭 |
+| 条件代入 | 指定カラムの値が正規表現に一致したとき、固定値を代入します | パターン: `^東京`、一致時: `関東` |
+| 日付フォーマット | 日付の形式を変換します。月オフセット（+N / -N か月）にも対応しています | 入力: `YYYYMMDD` → 出力: `YYYY/MM/DD` |
+
+コンバーターはパイプライン形式で複数を連鎖できます。たとえば「分割 → トリム → 大文字変換」のように、順番に適用されます。
+
+## 技術スタック
+
+| カテゴリ | ライブラリ |
+|---|---|
+| フレームワーク | React 19 |
+| 言語 | TypeScript |
+| ビルドツール | Vite |
+| UIライブラリ | Material UI (MUI) |
+| CSV解析 | PapaParse |
+| 日本語エンコーディング | encoding-japanese |
+| ドラッグ&ドロップ | dnd-kit |
+| ツアーガイド | Shepherd.js |
+| テスト | Vitest / Playwright |
+
+## ライセンス
+
+MIT
