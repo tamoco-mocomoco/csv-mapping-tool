@@ -17,11 +17,10 @@ function createSampleMappings(sourceColumns: Column[], targetColumns: Column[]):
   const tgtPhone = targetColumns.find(c => c.name === '電話番号（ハイフンなし）');
 
   const mappings: Mapping[] = [];
-  const now = Date.now();
 
   if (srcName && tgtLastName) {
     mappings.push({
-      id: `mapping_${now}_1`,
+      id: `mapping_${crypto.randomUUID()}`,
       sourceColumnIds: [srcName.id],
       targetColumnId: tgtLastName.id,
       converters: [{ type: 'split', delimiter: ' ', index: 0 } as ConverterConfig],
@@ -30,7 +29,7 @@ function createSampleMappings(sourceColumns: Column[], targetColumns: Column[]):
 
   if (srcName && tgtFirstName) {
     mappings.push({
-      id: `mapping_${now}_2`,
+      id: `mapping_${crypto.randomUUID()}`,
       sourceColumnIds: [srcName.id],
       targetColumnId: tgtFirstName.id,
       converters: [{ type: 'split', delimiter: ' ', index: 1 } as ConverterConfig],
@@ -39,7 +38,7 @@ function createSampleMappings(sourceColumns: Column[], targetColumns: Column[]):
 
   if (srcEmail && tgtEmail) {
     mappings.push({
-      id: `mapping_${now}_3`,
+      id: `mapping_${crypto.randomUUID()}`,
       sourceColumnIds: [srcEmail.id],
       targetColumnId: tgtEmail.id,
       converters: [{ type: 'case', caseType: 'lower' } as ConverterConfig],
@@ -48,7 +47,7 @@ function createSampleMappings(sourceColumns: Column[], targetColumns: Column[]):
 
   if (srcPhone && tgtPhone) {
     mappings.push({
-      id: `mapping_${now}_4`,
+      id: `mapping_${crypto.randomUUID()}`,
       sourceColumnIds: [srcPhone.id],
       targetColumnId: tgtPhone.id,
       converters: [{ type: 'replace', searchValue: '-', replaceValue: '' } as ConverterConfig],

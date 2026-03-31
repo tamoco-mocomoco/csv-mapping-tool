@@ -93,7 +93,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
   // Target columns actions
   const addTargetColumn = useCallback((name: string) => {
     const newColumn: Column = {
-      id: `target_${Date.now()}`,
+      id: `target_${crypto.randomUUID()}`,
       name,
     };
     setTargetColumns((prev) => [...prev, newColumn]);
@@ -122,7 +122,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
   // Mapping actions
   const addMapping = useCallback(() => {
     const newMapping: Mapping = {
-      id: `mapping_${Date.now()}`,
+      id: `mapping_${crypto.randomUUID()}`,
       sourceColumnIds: sourceColumns[0]?.id ? [sourceColumns[0].id] : [],
       targetColumnId: targetColumns[0]?.id || '',
       converters: [{ ...defaultConverterConfig }],
@@ -166,7 +166,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
 
       if (matchingSource) {
         newMappings.push({
-          id: `mapping_${Date.now()}_${newMappings.length}`,
+          id: `mapping_${crypto.randomUUID()}`,
           sourceColumnIds: [matchingSource.id],
           targetColumnId: targetCol.id,
           converters: [{ ...defaultConverterConfig }],
@@ -236,7 +236,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
   const saveProfile = useCallback((name: string) => {
     const now = Date.now();
     const newProfile: Profile = {
-      id: `profile_${now}`,
+      id: `profile_${crypto.randomUUID()}`,
       name,
       sourceColumns,
       targetColumns,
@@ -307,7 +307,7 @@ export function MappingProvider({ children }: { children: React.ReactNode }) {
 
   const importProfile = useCallback(
     (profile: Profile, overwrite = false) => {
-      const newProfileId = `profile_${Date.now()}`;
+      const newProfileId = `profile_${crypto.randomUUID()}`;
 
       setProfiles((prev) => {
         try {
