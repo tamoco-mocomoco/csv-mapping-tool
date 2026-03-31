@@ -1,26 +1,28 @@
 # CSV Mapping Tool
 
-CSVファイルを読み込み、カラムのマッピングと変換処理を組み合わせて、必要な形式のCSVを出力するブラウザ完結型のデータ変換ツールです。
+![Deploy](https://github.com/tamoco-mocomoco/csv-mapping-tool/actions/workflows/deploy.yml/badge.svg) ![Test](https://github.com/tamoco-mocomoco/csv-mapping-tool/actions/workflows/test.yml/badge.svg) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## 特徴
+A browser-based CSV column mapping & data transformation tool. No installation required — all data is processed locally in your browser and never sent to any server.
 
-- **ブラウザだけで完結** -- インストール不要、データは外部に送信されません
-- **UTF-8 / SJIS 対応** -- 日本語CSVもそのまま読み込めます
-- **11種類のコンバーター** -- 分割・置換・日付変換など、よく使う変換を網羅
-- **パイプライン形式** -- 複数のコンバーターを順番につなげて一括適用
-- **自動マッピング** -- カラム名が一致するものを自動で対応付け
-- **データフィルター** -- 正規表現で必要な行だけを抽出
-- **プロファイル保存** -- マッピング設定をブラウザに保存し、いつでも復元
-- **ドラッグ&ドロップ** -- カラムやコンバーターの並び順を直感的に変更
-- **ツアーガイド** -- 初めての方向けに操作手順を案内
+## Features
 
-## デモ
+- **Runs entirely in the browser** — No server, no upload, your data stays local
+- **UTF-8 / Shift_JIS support** — Handles Japanese CSV files natively
+- **11 built-in converters** — Split, replace, date format, conditional assignment, and more
+- **Pipeline processing** — Chain multiple converters in sequence for complex transformations
+- **Auto-mapping** — Automatically matches source and target columns by name
+- **Data filtering** — Filter rows using regular expressions
+- **Profile saving** — Save mapping configurations in the browser and reuse them anytime
+- **Drag & drop** — Reorder columns and converters intuitively
+- **Guided tour** — Built-in walkthrough for first-time users
 
-以下のURLからすぐに試せます（GitHub Pages）:
+## Demo
 
-https://tamoco-mocomoco.github.io/csv-mapping-tool/
+Try it instantly (GitHub Pages):
 
-## クイックスタート（開発者向け）
+**https://tamoco-mocomoco.github.io/csv-mapping-tool/**
+
+## Quick Start (for developers)
 
 ```bash
 git clone https://github.com/tamoco-mocomoco/csv-mapping-tool.git
@@ -29,51 +31,59 @@ npm install
 npm run dev
 ```
 
-ブラウザで `http://localhost:5173/csv-mapping-tool/` を開くと起動します。
+Open `http://localhost:5173/csv-mapping-tool/` in your browser.
 
-## 使い方
+## How to Use
 
-1. **CSVを読み込む** -- 画面上部からCSVファイルを選択します。エンコーディング（UTF-8 / SJIS）を切り替えられます。
-2. **出力カラムを設定する** -- 出力先となるターゲットカラムを追加・編集します。
-3. **マッピングを設定する** -- ソースカラムとターゲットカラムを対応付け、必要に応じてコンバーターを追加します。自動マッピング機能を使うと、同名のカラムをまとめて対応付けできます。
-4. **データフィルターを設定する**（任意） -- 正規表現を使って、特定の条件に合う行だけを出力対象にできます。
-5. **プレビューで確認する** -- 変換結果を画面上で確認します。
-6. **CSVをエクスポートする** -- 変換済みデータをCSVファイルとしてダウンロードします。
+1. **Import CSV** — Select a CSV file and choose the encoding (UTF-8 / Shift_JIS)
+2. **Define target columns** — Add or edit the output columns
+3. **Set up mappings** — Map source columns to target columns and add converters as needed. Use auto-mapping for columns with matching names
+4. **Filter data** (optional) — Use regex to include only specific rows
+5. **Preview results** — Check the transformed data on screen
+6. **Export CSV** — Download the converted data as a CSV file
 
-設定内容はプロファイルとして保存しておけば、次回以降は読み込むだけで同じ変換を再実行できます。
+Save your configuration as a profile to reuse the same mapping next time.
 
-## コンバーター一覧
+## Converters
 
-| コンバーター | 説明 | 設定例 |
+| Converter | Description | Example |
 |---|---|---|
-| そのまま | 値をそのままコピーします | -- |
-| 分割 | 区切り文字で分割し、指定位置の要素を取得します | 区切り文字: `-`、取得位置: `0` |
-| 置換 | 文字列を検索して別の文字列に置き換えます | 検索: `株式会社` → 置換: `(株)` |
-| 接頭辞付与 | 先頭に固定文字列・ランダム文字列・日付を付加します | 固定値: `ID-` |
-| 接尾辞付与 | 末尾に固定文字列を付加します | 接尾辞: `@example.com` |
-| トリム | 前後の空白を除去します | 対象: 両端 / 先頭のみ / 末尾のみ |
-| 大文字/小文字 | 大文字・小文字・先頭大文字に変換します | 変換: `upper` / `lower` / `capitalize` |
-| 部分抽出 | 開始位置と終了位置を指定して部分文字列を取得します | 開始: `0`、終了: `3` |
-| パディング | 指定の長さになるまで文字を埋めます | 文字: `0`、長さ: `5`、方向: 先頭 |
-| 条件代入 | 指定カラムの値が正規表現に一致したとき、固定値を代入します | パターン: `^東京`、一致時: `関東` |
-| 日付フォーマット | 日付の形式を変換します。月オフセット（+N / -N か月）にも対応しています | 入力: `YYYYMMDD` → 出力: `YYYY/MM/DD` |
+| Direct | Copy the value as-is | — |
+| Split | Split by delimiter and pick an element | Delimiter: `-`, Index: `0` |
+| Replace | Find and replace a string | `株式会社` → `(株)` |
+| Prefix | Prepend a fixed string, random string, or date | Fixed: `ID-` |
+| Suffix | Append a fixed string | Suffix: `@example.com` |
+| Trim | Remove leading/trailing whitespace | Target: both / start / end |
+| Case | Convert to upper / lower / capitalize | `upper` / `lower` / `capitalize` |
+| Substring | Extract a portion of the string | Start: `0`, End: `3` |
+| Padding | Pad to a specified length | Char: `0`, Length: `5`, Direction: start |
+| Conditional | Assign a value based on regex match in another column | Pattern: `^Tokyo` → Value: `Kanto` |
+| Date Format | Convert date formats with optional month offset | Input: `YYYYMMDD` → Output: `YYYY/MM/DD` |
 
-コンバーターはパイプライン形式で複数を連鎖できます。たとえば「分割 → トリム → 大文字変換」のように、順番に適用されます。
+Converters can be chained in a pipeline. For example: Split → Trim → Upper Case.
 
-## 技術スタック
+## Tech Stack
 
-| カテゴリ | ライブラリ |
+| Category | Library |
 |---|---|
-| フレームワーク | React 19 |
-| 言語 | TypeScript |
-| ビルドツール | Vite |
-| UIライブラリ | Material UI (MUI) |
-| CSV解析 | PapaParse |
-| 日本語エンコーディング | encoding-japanese |
-| ドラッグ&ドロップ | dnd-kit |
-| ツアーガイド | Shepherd.js |
-| テスト | Vitest / Playwright |
+| Framework | React 19 |
+| Language | TypeScript |
+| Build Tool | Vite |
+| UI Library | Material UI (MUI) |
+| CSV Parsing | PapaParse |
+| Japanese Encoding | encoding-japanese |
+| Drag & Drop | dnd-kit |
+| Guided Tour | Shepherd.js |
+| Testing | Vitest / Playwright |
 
-## ライセンス
+## License
 
 MIT
+
+---
+
+## 日本語ドキュメント
+
+日本語の詳細ドキュメントは以下を参照してください。
+
+- [ユーザーガイド](docs/user-guide.md) — 全機能の使い方・コンバーター詳細・ユースケース集
