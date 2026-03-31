@@ -58,23 +58,25 @@ function createSampleMappings(sourceColumns: Column[], targetColumns: Column[]):
   return mappings;
 }
 
-// サンプルCSVをダウンロードする関数
-function downloadSampleCsv() {
-  const csvContent = `氏名,メールアドレス,電話番号
-田中 太郎,TANAKA@EXAMPLE.COM,090-1234-5678
-鈴木 花子,SUZUKI@EXAMPLE.COM,080-9876-5432
-佐藤 次郎,SATO@EXAMPLE.COM,070-1111-2222`;
+// サンプルデータ定義
+const SAMPLE_SOURCE_COLUMNS: Column[] = [
+  { id: 'tour_src_1', name: '氏名' },
+  { id: 'tour_src_2', name: 'メールアドレス' },
+  { id: 'tour_src_3', name: '電話番号' },
+];
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'sample.csv';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-}
+const SAMPLE_TARGET_COLUMNS: Column[] = [
+  { id: 'tour_tgt_1', name: '姓' },
+  { id: 'tour_tgt_2', name: '名' },
+  { id: 'tour_tgt_3', name: 'メール（小文字）' },
+  { id: 'tour_tgt_4', name: '電話番号（ハイフンなし）' },
+];
+
+const SAMPLE_SOURCE_DATA: Record<string, string>[] = [
+  { tour_src_1: '田中 太郎', tour_src_2: 'TANAKA@EXAMPLE.COM', tour_src_3: '090-1234-5678' },
+  { tour_src_1: '鈴木 花子', tour_src_2: 'SUZUKI@EXAMPLE.COM', tour_src_3: '080-9876-5432' },
+  { tour_src_1: '佐藤 次郎', tour_src_2: 'SATO@EXAMPLE.COM', tour_src_3: '070-1111-2222' },
+];
 
 interface TourActions {
   setSourceColumns: (columns: Column[]) => void;
@@ -116,9 +118,12 @@ export function useTour(actions?: TourActions) {
         {
           text: '始める',
           action: () => {
-            // サンプルデータをリセット
+            // サンプルデータを自動投入
             if (actions) {
               actions.resetAll();
+              actions.setSourceColumns(SAMPLE_SOURCE_COLUMNS);
+              actions.setTargetColumns(SAMPLE_TARGET_COLUMNS);
+              actions.setSourceData(SAMPLE_SOURCE_DATA);
             }
             tour.next();
           },
@@ -131,44 +136,13 @@ export function useTour(actions?: TourActions) {
       attachTo: { element: '[data-tour="source-columns"]', on: 'bottom' },
       text: `
         <h3>1. 変換前カラムを設定</h3>
-        <p>サンプルCSVをダウンロードして、「インポート」ボタンからインポートしてください。</p>
-        <p style="margin-top:12px;">
-          <a href="#" id="download-sample-csv-source" style="color:#1976d2; text-decoration:underline; cursor:pointer;">
-            📥 サンプルCSVをダウンロード
-          </a>
-        </p>
-        <p style="margin-top:8px; font-size:12px; color:#666;">
-          インポート後、「次へ」を押してください。
-        </p>
+        <p>サンプルデータが自動で読み込まれました。</p>
+        <p>通常はCSVファイルをインポートすると、ここにカラム一覧が表示されます。</p>
+        <p style="margin-top:8px; font-size:13px;">今回のサンプル: <strong>氏名</strong>、<strong>メールアドレス</strong>、<strong>電話番号</strong></p>
       `,
-      when: {
-        show: () => {
-          setTimeout(() => {
-            const link = document.getElementById('download-sample-csv-source');
-            if (link) {
-              link.addEventListener('click', (e) => {
-                e.preventDefault();
-                downloadSampleCsv();
-              });
-            }
-          }, 100);
-        },
-      },
       buttons: [
         { text: '戻る', action: tour.back, secondary: true },
-        {
-          text: '次へ',
-          action: () => {
-            if (actions) {
-              const columns = actions.getSourceColumns();
-              if (columns.length === 0) {
-                alert('先にサンプルCSVをインポートしてください。');
-                return;
-              }
-            }
-            tour.next();
-          },
-        },
+        { text: '次へ', action: tour.next },
       ],
     });
 
@@ -177,32 +151,13 @@ export function useTour(actions?: TourActions) {
       attachTo: { element: '[data-tour="target-columns"]', on: 'bottom' },
       text: `
         <h3>2. 変換後カラムを設定</h3>
-        <p>「カラムを追加」ボタンから、以下の4つのカラムを追加してください：</p>
-        <ul>
-          <li>姓</li>
-          <li>名</li>
-          <li>メール（小文字）</li>
-          <li>電話番号（ハイフンなし）</li>
-        </ul>
-        <p style="margin-top:8px; font-size:12px; color:#666;">
-          追加後、「次へ」を押してください。
-        </p>
+        <p>出力先となるカラムも自動で設定されました。</p>
+        <p>通常は「カラムを追加」ボタンから手動で追加します。</p>
+        <p style="margin-top:8px; font-size:13px;">今回のサンプル: <strong>姓</strong>、<strong>名</strong>、<strong>メール（小文字）</strong>、<strong>電話番号（ハイフンなし）</strong></p>
       `,
       buttons: [
         { text: '戻る', action: tour.back, secondary: true },
-        {
-          text: '次へ',
-          action: () => {
-            if (actions) {
-              const columns = actions.getTargetColumns();
-              if (columns.length === 0) {
-                alert('先に変換後カラムを追加してください。');
-                return;
-              }
-            }
-            tour.next();
-          },
-        },
+        { text: '次へ', action: tour.next },
       ],
     });
 
@@ -211,44 +166,12 @@ export function useTour(actions?: TourActions) {
       attachTo: { element: '[data-tour="data-import"]', on: 'bottom' },
       text: `
         <h3>3. CSVデータをインポート</h3>
-        <p>変換するデータを読み込みます。先ほどダウンロードしたサンプルCSVを「インポート」からインポートしてください。</p>
-        <p style="margin-top:12px;">
-          <a href="#" id="download-sample-csv" style="color:#1976d2; text-decoration:underline; cursor:pointer;">
-            📥 サンプルCSVをダウンロード
-          </a>
-        </p>
-        <p style="margin-top:8px; font-size:12px; color:#666;">
-          インポート後、「次へ」を押してください。
-        </p>
+        <p>変換するCSVデータも自動で読み込まれています。</p>
+        <p>通常は「インポート」ボタンからCSVファイルを選択して読み込みます。エンコーディング（UTF-8 / SJIS）も切り替えられます。</p>
       `,
-      when: {
-        show: () => {
-          setTimeout(() => {
-            const link = document.getElementById('download-sample-csv');
-            if (link) {
-              link.addEventListener('click', (e) => {
-                e.preventDefault();
-                downloadSampleCsv();
-              });
-            }
-          }, 100);
-        },
-      },
       buttons: [
         { text: '戻る', action: tour.back, secondary: true },
-        {
-          text: '次へ',
-          action: () => {
-            if (actions) {
-              const data = actions.getSourceData();
-              if (data.length === 0) {
-                alert('先にCSVデータをインポートしてください。');
-                return;
-              }
-            }
-            tour.next();
-          },
-        },
+        { text: '次へ', action: tour.next },
       ],
     });
 
