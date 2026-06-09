@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "CSV マッピングツール",
+  "version": "1.0.0",
+  "description": "CSVファイルのカラムマッピングとデータ変換を行うChrome拡張機能",
+  "action": {
+    "default_title": "CSV マッピングツール",
+    "default_popup": "popup.html"
+  }
+}

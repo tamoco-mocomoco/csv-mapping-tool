@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Container, Box, Grid } from '@mui/material';
-import { MappingProvider, useMappingContext } from './contexts/MappingContext';
-import { Header } from './components/Layout/Header';
-import { SourceColumns } from './components/ColumnConfig/SourceColumns';
-import { TargetColumns } from './components/ColumnConfig/TargetColumns';
-import { DataImportSection } from './components/FileIO/DataImportSection';
-import { MappingEditor } from './components/Mapping/MappingEditor';
-import { DataPreview } from './components/Preview/DataPreview';
+import { MappingProvider, useMappingContext } from '@core/contexts/MappingContext';
+import { Header } from '@core/components/Layout/Header';
+import { SourceColumns } from '@core/components/ColumnConfig/SourceColumns';
+import { TargetColumns } from '@core/components/ColumnConfig/TargetColumns';
+import { DataImportSection } from '@core/components/FileIO/DataImportSection';
+import { MappingEditor } from '@core/components/Mapping/MappingEditor';
+import { DataPreview } from '@core/components/Preview/DataPreview';
 import { useTour } from './hooks/useTour';
 
 function AppContent() {

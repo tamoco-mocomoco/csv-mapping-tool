@@ -21,6 +21,7 @@ import {
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { useMappingContext } from '../../contexts/MappingContext';
 import { transformData } from '../../utils/transform';
+import { applyDataFilter } from '../../utils/dataFilter';
 import { DataTable } from './DataTable';
 import { CsvExporter } from '../FileIO/CsvExporter';
 import type { DataFilter } from '../../types';
@@ -37,38 +38,6 @@ function TabPanel({ children, value, index }: TabPanelProps) {
       {value === index && <Box sx={{ pt: 2 }}>{children}</Box>}
     </div>
   );
-}
-
-export function applyDataFilter(
-  sourceData: Record<string, string>[],
-  transformedData: Record<string, string>[],
-  dataFilter: DataFilter
-): { filteredSource: Record<string, string>[]; filteredTransformed: Record<string, string>[] } {
-  if (!dataFilter.enabled || !dataFilter.columnId || !dataFilter.pattern) {
-    return { filteredSource: sourceData, filteredTransformed: transformedData };
-  }
-
-  let regex: RegExp;
-  try {
-    regex = new RegExp(dataFilter.pattern);
-  } catch {
-    return { filteredSource: sourceData, filteredTransformed: transformedData };
-  }
-
-  const dataToFilter = dataFilter.columnType === 'source' ? sourceData : transformedData;
-  const matchedIndices: number[] = [];
-
-  dataToFilter.forEach((row, index) => {
-    const value = row[dataFilter.columnId] ?? '';
-    if (regex.test(value)) {
-      matchedIndices.push(index);
-    }
-  });
-
-  return {
-    filteredSource: matchedIndices.map((i) => sourceData[i]),
-    filteredTransformed: matchedIndices.map((i) => transformedData[i]),
-  };
 }
 
 export function DataPreview() {

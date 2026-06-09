@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import Shepherd from 'shepherd.js';
 import 'shepherd.js/dist/css/shepherd.css';
-import type { Column, Mapping, ConverterConfig } from '../types';
+import type { Column, Mapping, ConverterConfig } from '@core/types';
 
 const TOUR_COMPLETED_KEY = 'csv-mapper-tour-completed';
 

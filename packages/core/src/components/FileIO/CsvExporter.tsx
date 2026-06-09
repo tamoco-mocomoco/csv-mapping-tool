@@ -3,7 +3,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { generateCSV, downloadCSV } from '../../utils/csv';
 import { useMappingContext } from '../../contexts/MappingContext';
 import { transformData } from '../../utils/transform';
-import { applyDataFilter } from '../Preview/DataPreview';
+import { applyDataFilter } from '../../utils/dataFilter';
 
 export function CsvExporter() {
   const { sourceData, mappings, sourceColumns, targetColumns, dataFilter } = useMappingContext();

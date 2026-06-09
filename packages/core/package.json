@@ -1,0 +1,7 @@
+{
+  "name": "@csv-mapping-tool/core",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./src/index.ts"
+}
