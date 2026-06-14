@@ -83,10 +83,31 @@ interface TourActions {
   setMappings: (mappings: Mapping[]) => void;
   setSourceData: (data: Record<string, string>[]) => void;
   resetAll: () => void;
+  setActiveStep: (step: number) => void;
   getSourceColumns: () => Column[];
   getTargetColumns: () => Column[];
   getSourceData: () => Record<string, string>[];
   getMappings: () => Mapping[];
+}
+
+// 指定したウィザードステップへ遷移し、対象要素がDOMに描画されるのを待つ
+function navigateToStep(actions: TourActions | undefined, step: number, selector?: string): Promise<void> {
+  return new Promise((resolve) => {
+    if (actions) actions.setActiveStep(step);
+    if (!selector) {
+      setTimeout(resolve, 50);
+      return;
+    }
+    const deadline = Date.now() + 1500;
+    const tick = () => {
+      if (document.querySelector(selector) || Date.now() > deadline) {
+        resolve();
+      } else {
+        requestAnimationFrame(tick);
+      }
+    };
+    requestAnimationFrame(tick);
+  });
 }
 
 export function useTour(actions?: TourActions) {
@@ -130,9 +151,11 @@ export function useTour(actions?: TourActions) {
       ],
     });
 
+    // ----- カラム定義ステップ（wizard step 1）-----
     tour.addStep({
       id: 'source-columns',
       attachTo: { element: '[data-tour="source-columns"]', on: 'bottom' },
+      beforeShowPromise: () => navigateToStep(actions, 1, '[data-tour="source-columns"]'),
       text: `
         <h3>1. 変換前カラムを設定</h3>
         <p>サンプルデータが自動で読み込まれました。</p>
@@ -148,6 +171,7 @@ export function useTour(actions?: TourActions) {
     tour.addStep({
       id: 'target-columns',
       attachTo: { element: '[data-tour="target-columns"]', on: 'bottom' },
+      beforeShowPromise: () => navigateToStep(actions, 1, '[data-tour="target-columns"]'),
       text: `
         <h3>2. 変換後カラムを設定</h3>
         <p>出力先となるカラムも自動で設定されました。</p>
@@ -160,9 +184,11 @@ export function useTour(actions?: TourActions) {
       ],
     });
 
+    // ----- CSV取込 & マッピングステップ（wizard step 2）-----
     tour.addStep({
       id: 'data-import',
       attachTo: { element: '[data-tour="data-import"]', on: 'bottom' },
+      beforeShowPromise: () => navigateToStep(actions, 2, '[data-tour="data-import"]'),
       text: `
         <h3>3. CSVデータをインポート</h3>
         <p>変換するCSVデータも自動で読み込まれています。</p>
@@ -177,6 +203,7 @@ export function useTour(actions?: TourActions) {
     tour.addStep({
       id: 'mapping-editor',
       attachTo: { element: '[data-tour="mapping-editor"]', on: 'bottom' },
+      beforeShowPromise: () => navigateToStep(actions, 2, '[data-tour="mapping-editor"]'),
       text: `
         <h3>4. マッピングを設定</h3>
         <p>変換ルールを定義します。「次へ」を押すと、以下のマッピングが自動で追加されます：</p>
@@ -225,9 +252,11 @@ export function useTour(actions?: TourActions) {
       ],
     });
 
+    // ----- プレビュー & 出力ステップ（wizard step 3）-----
     tour.addStep({
       id: 'preview',
       attachTo: { element: '[data-tour="preview"]', on: 'top' },
+      beforeShowPromise: () => navigateToStep(actions, 3, '[data-tour="preview"]'),
       text: `
         <h3>5. 結果を確認</h3>
         <p>変換結果がリアルタイムでプレビューされます。</p>
@@ -245,9 +274,11 @@ export function useTour(actions?: TourActions) {
       ],
     });
 
+    // ----- プロファイルステップ（wizard step 0 へ戻る）-----
     tour.addStep({
       id: 'profile',
       attachTo: { element: '[data-tour="profile"]', on: 'bottom' },
+      beforeShowPromise: () => navigateToStep(actions, 0, '[data-tour="profile"]'),
       text: `
         <h3>6. 設定を保存</h3>
         <p>今回の設定をプロファイルとして保存できます。</p>

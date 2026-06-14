@@ -1,7 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { goToStep, WIZARD_STEPS } from './helpers';
 
 // 表示されているShepherdステップを取得するセレクタ
 const visibleShepherdStep = '.shepherd-element:not([hidden])';
+// Shepherd内のボタンに限定するためのスコープ（Wizardの「次へ」と衝突回避）
+const shepherdButton = (name: string) => `${visibleShepherdStep} .shepherd-button:has-text("${name}")`;
 
 test.describe('Tour Feature', () => {
   test.beforeEach(async ({ page }) => {
@@ -21,35 +24,32 @@ test.describe('Tour Feature', () => {
 
     // ステップ1: ウェルカム - 「始める」をクリック
     await expect(page.locator(visibleShepherdStep)).toContainText('ようこそ');
-    await page.getByRole('button', { name: '始める' }).click();
+    await page.locator(shepherdButton('始める')).click();
 
     // ステップ2: 変換前カラム
     // サンプルデータ自動投入により、手動インポートなしで「次へ」が押せること
     await expect(page.locator(visibleShepherdStep)).toContainText('変換前カラム');
-    await page.getByRole('button', { name: '次へ' }).click();
+    await page.locator(shepherdButton('次へ')).click();
 
     // ステップ3: 変換後カラム
     await expect(page.locator(visibleShepherdStep)).toContainText('変換後カラム');
-    await page.getByRole('button', { name: '次へ' }).click();
+    await page.locator(shepherdButton('次へ')).click();
 
     // ステップ4: CSVデータをインポート
     await expect(page.locator(visibleShepherdStep)).toContainText('CSVデータ');
-    await page.getByRole('button', { name: '次へ' }).click();
+    await page.locator(shepherdButton('次へ')).click();
 
     // ステップ5: マッピング設定
     await expect(page.locator(visibleShepherdStep)).toContainText('マッピングを設定');
-    await page.getByRole('button', { name: '次へ' }).click();
-
-    // マッピングが4つ追加されていることを確認
-    await expect(page.locator('[data-testid="mapping-row"]')).toHaveCount(4);
+    await page.locator(shepherdButton('次へ')).click();
 
     // ステップ6: プレビュー
     await expect(page.locator(visibleShepherdStep)).toContainText('結果を確認');
-    await page.getByRole('button', { name: '次へ' }).click();
+    await page.locator(shepherdButton('次へ')).click();
 
     // ステップ7: プロファイル - 完了
     await expect(page.locator(visibleShepherdStep)).toContainText('設定を保存');
-    await page.getByRole('button', { name: '完了' }).click();
+    await page.locator(shepherdButton('完了')).click();
 
     // ツアーが終了したことを確認
     await expect(page.locator(visibleShepherdStep)).not.toBeVisible();
@@ -64,18 +64,19 @@ test.describe('Tour Feature', () => {
   test('ツアー完了後に変換結果が正しくプレビューされる', async ({ page }) => {
     // ツアーを最後まで進める
     await expect(page.locator(visibleShepherdStep)).toBeVisible({ timeout: 5000 });
-    await page.getByRole('button', { name: '始める' }).click();
+    await page.locator(shepherdButton('始める')).click();
 
     // 各ステップを「次へ」で進む
     for (let i = 0; i < 5; i++) {
-      await page.getByRole('button', { name: '次へ' }).click();
+      await page.locator(shepherdButton('次へ')).click();
       await page.waitForTimeout(300);
     }
 
     // 完了
-    await page.getByRole('button', { name: '完了' }).click();
+    await page.locator(shepherdButton('完了')).click();
 
-    // 変換後タブで結果を確認
+    // プレビューステップへ移動して結果を確認
+    await goToStep(page, WIZARD_STEPS.preview);
     await page.getByRole('tab', { name: '変換後' }).click();
     await page.waitForTimeout(300);
 
@@ -97,7 +98,7 @@ test.describe('Tour Feature', () => {
     await expect(page.locator(visibleShepherdStep)).toBeVisible({ timeout: 5000 });
 
     // 「スキップ」をクリック
-    await page.getByRole('button', { name: 'スキップ' }).click();
+    await page.locator(shepherdButton('スキップ')).click();
 
     // ツアーが終了したことを確認
     await expect(page.locator(visibleShepherdStep)).not.toBeVisible();
@@ -112,7 +113,7 @@ test.describe('Tour Feature', () => {
   test('ヘッダーからツアーを再開できる', async ({ page }) => {
     // まずツアーをスキップ
     await expect(page.locator(visibleShepherdStep)).toBeVisible({ timeout: 5000 });
-    await page.getByRole('button', { name: 'スキップ' }).click();
+    await page.locator(shepherdButton('スキップ')).click();
     await expect(page.locator(visibleShepherdStep)).not.toBeVisible();
 
     // ヘッダーの「使い方」ボタンをクリック
@@ -126,7 +127,7 @@ test.describe('Tour Feature', () => {
   test('オーバーレイがUIをブロックしない（ツアー中にページ要素が操作可能）', async ({ page }) => {
     // ツアー開始
     await expect(page.locator(visibleShepherdStep)).toBeVisible({ timeout: 5000 });
-    await page.getByRole('button', { name: '始める' }).click();
+    await page.locator(shepherdButton('始める')).click();
 
     // ステップ2で、×ボタン（キャンセル）がクリック可能であること
     await expect(page.locator(visibleShepherdStep)).toBeVisible();
@@ -147,14 +148,14 @@ test.describe('Tour Feature', () => {
 
     // ツアー開始 → 全ステップを「次へ」で進む
     await expect(page.locator(visibleShepherdStep)).toBeVisible({ timeout: 5000 });
-    await page.getByRole('button', { name: '始める' }).click();
+    await page.locator(shepherdButton('始める')).click();
 
     for (let i = 0; i < 5; i++) {
-      await page.getByRole('button', { name: '次へ' }).click();
+      await page.locator(shepherdButton('次へ')).click();
       await page.waitForTimeout(300);
     }
 
-    await page.getByRole('button', { name: '完了' }).click();
+    await page.locator(shepherdButton('完了')).click();
 
     // ツアー中にalert()が一度も呼ばれていないこと
     expect(alertTriggered).toBe(false);

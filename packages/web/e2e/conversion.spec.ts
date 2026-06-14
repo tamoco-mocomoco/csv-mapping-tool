@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { goToStep, WIZARD_STEPS } from './helpers';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +26,7 @@ test.describe('Complex CSV Conversions', () => {
     fs.writeFileSync(csvPath, csvContent);
 
     try {
+      await goToStep(page, WIZARD_STEPS.columns);
       // 変換前カラムのインポート
       const sourceFileInput = page.locator('[data-tour="source-columns"] input[type="file"]');
       await sourceFileInput.setInputFiles(csvPath);
@@ -39,6 +41,7 @@ test.describe('Complex CSV Conversions', () => {
       await page.getByRole('textbox', { name: 'カラム名' }).fill('名');
       await page.getByRole('button', { name: '保存' }).click();
 
+      await goToStep(page, WIZARD_STEPS.mapping);
       // CSVデータをインポート
       const dataFileInput = page.locator('[data-tour="data-import"] input[type="file"]');
       await dataFileInput.setInputFiles(csvPath);
@@ -89,6 +92,7 @@ test.describe('Complex CSV Conversions', () => {
       await secondMapping.locator('[data-testid="converter-type-select"]').last().click();
       await page.getByRole('option', { name: 'トリム' }).click();
 
+      await goToStep(page, WIZARD_STEPS.preview);
       // 変換後タブで結果を確認
       await page.getByRole('tab', { name: '変換後' }).click();
       await page.waitForTimeout(300);
@@ -113,6 +117,7 @@ test.describe('Complex CSV Conversions', () => {
     fs.writeFileSync(csvPath, csvContent);
 
     try {
+      await goToStep(page, WIZARD_STEPS.columns);
       // 変換前カラムのインポート
       const sourceFileInput = page.locator('[data-tour="source-columns"] input[type="file"]');
       await sourceFileInput.setInputFiles(csvPath);
@@ -123,6 +128,7 @@ test.describe('Complex CSV Conversions', () => {
       await page.getByRole('textbox', { name: 'カラム名' }).fill('正規化メール');
       await page.getByRole('button', { name: '保存' }).click();
 
+      await goToStep(page, WIZARD_STEPS.mapping);
       // CSVデータをインポート
       const dataFileInput = page.locator('[data-tour="data-import"] input[type="file"]');
       await dataFileInput.setInputFiles(csvPath);
@@ -149,6 +155,7 @@ test.describe('Complex CSV Conversions', () => {
       await mappingCard.locator('[data-testid="case-type-select"]').click();
       await page.getByRole('option', { name: '小文字' }).click();
 
+      await goToStep(page, WIZARD_STEPS.preview);
       // 変換後タブで結果を確認
       await page.getByRole('tab', { name: '変換後' }).click();
       await page.waitForTimeout(300);
@@ -172,6 +179,7 @@ test.describe('Complex CSV Conversions', () => {
     fs.writeFileSync(csvPath, csvContent);
 
     try {
+      await goToStep(page, WIZARD_STEPS.columns);
       // 変換前カラムのインポート
       const sourceFileInput = page.locator('[data-tour="source-columns"] input[type="file"]');
       await sourceFileInput.setInputFiles(csvPath);
@@ -184,6 +192,7 @@ test.describe('Complex CSV Conversions', () => {
         await page.getByRole('button', { name: '保存' }).click();
       }
 
+      await goToStep(page, WIZARD_STEPS.mapping);
       // CSVデータをインポート
       const dataFileInput = page.locator('[data-tour="data-import"] input[type="file"]');
       await dataFileInput.setInputFiles(csvPath);
@@ -214,6 +223,7 @@ test.describe('Complex CSV Conversions', () => {
         await mapping.locator('[data-testid="split-index-input"] input').fill(target.index);
       }
 
+      await goToStep(page, WIZARD_STEPS.preview);
       // 変換後タブで結果を確認
       await page.getByRole('tab', { name: '変換後' }).click();
       await page.waitForTimeout(300);
@@ -240,6 +250,7 @@ clothing`;
     fs.writeFileSync(csvPath, csvContent);
 
     try {
+      await goToStep(page, WIZARD_STEPS.columns);
       // 変換前カラムのインポート
       const sourceFileInput = page.locator('[data-tour="source-columns"] input[type="file"]');
       await sourceFileInput.setInputFiles(csvPath);
@@ -250,6 +261,7 @@ clothing`;
       await page.getByRole('textbox', { name: 'カラム名' }).fill('商品コード');
       await page.getByRole('button', { name: '保存' }).click();
 
+      await goToStep(page, WIZARD_STEPS.mapping);
       // CSVデータをインポート
       const dataFileInput = page.locator('[data-tour="data-import"] input[type="file"]');
       await dataFileInput.setInputFiles(csvPath);
@@ -282,6 +294,7 @@ clothing`;
       await page.getByRole('option', { name: '接尾辞付与' }).click();
       await mappingCard.locator('[data-testid="suffix-value-input"] input').fill('-JP');
 
+      await goToStep(page, WIZARD_STEPS.preview);
       // 変換後タブで結果を確認
       await page.getByRole('tab', { name: '変換後' }).click();
       await page.waitForTimeout(300);
@@ -306,6 +319,7 @@ clothing`;
     fs.writeFileSync(csvPath, csvContent);
 
     try {
+      await goToStep(page, WIZARD_STEPS.columns);
       // 変換前カラムのインポート
       const sourceFileInput = page.locator('[data-tour="source-columns"] input[type="file"]');
       await sourceFileInput.setInputFiles(csvPath);
@@ -316,6 +330,7 @@ clothing`;
       await page.getByRole('textbox', { name: 'カラム名' }).fill('氏名');
       await page.getByRole('button', { name: '保存' }).click();
 
+      await goToStep(page, WIZARD_STEPS.mapping);
       // CSVデータをインポート
       const dataFileInput = page.locator('[data-tour="data-import"] input[type="file"]');
       await dataFileInput.setInputFiles(csvPath);
@@ -339,6 +354,7 @@ clothing`;
       await mappingCard.locator('[data-testid="target-column-select"]').click();
       await page.getByRole('option', { name: '氏名' }).click();
 
+      await goToStep(page, WIZARD_STEPS.preview);
       // 変換後タブで結果を確認
       await page.getByRole('tab', { name: '変換後' }).click();
       await page.waitForTimeout(300);

@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { goToStep, WIZARD_STEPS } from './helpers';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,7 +22,7 @@ test.describe('Profile Import/Export', () => {
     await page.goto('/');
 
     // プロファイルメニューを開く
-    await page.click('button:has-text("プロファイル")');
+    await page.click('header button:has-text("プロファイル")');
 
     // 新規保存をクリック
     await page.getByRole('menuitem', { name: '新規保存' }).click();
@@ -37,7 +38,7 @@ test.describe('Profile Import/Export', () => {
     await expect(page.getByRole('dialog')).not.toBeVisible();
 
     // プロファイルが保存されたことを確認
-    await page.click('button:has-text("プロファイル")');
+    await page.click('header button:has-text("プロファイル")');
     // メニュー内のプロファイル名を確認
     await expect(page.getByRole('menu').getByText('テストプロファイル')).toBeVisible();
   });
@@ -46,7 +47,7 @@ test.describe('Profile Import/Export', () => {
     await page.goto('/');
 
     // まずプロファイルを保存
-    await page.click('button:has-text("プロファイル")');
+    await page.click('header button:has-text("プロファイル")');
     await page.getByRole('menuitem', { name: '新規保存' }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     await page.getByRole('textbox').fill('エクスポートテスト');
@@ -54,7 +55,7 @@ test.describe('Profile Import/Export', () => {
     await expect(page.getByRole('dialog')).not.toBeVisible();
 
     // ダウンロードをキャプチャ
-    await page.click('button:has-text("プロファイル")');
+    await page.click('header button:has-text("プロファイル")');
 
     const [download] = await Promise.all([
       page.waitForEvent('download'),
@@ -91,7 +92,7 @@ test.describe('Profile Import/Export', () => {
 
     try {
       // まず同名のプロファイルを保存
-      await page.click('button:has-text("プロファイル")');
+      await page.click('header button:has-text("プロファイル")');
       await page.getByRole('menuitem', { name: '新規保存' }).click();
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('textbox').fill('上書きテスト');
@@ -99,11 +100,11 @@ test.describe('Profile Import/Export', () => {
       await expect(page.getByRole('dialog')).not.toBeVisible();
 
       // 同名のプロファイルをインポート（上書きダイアログが出るはず）
-      await page.click('button:has-text("プロファイル")');
+      await page.click('header button:has-text("プロファイル")');
       await page.getByRole('menuitem', { name: 'インポート' }).click();
 
       // ファイルを選択（.json用のinputを指定）
-      const fileInput = page.locator('input[type="file"][accept=".json"]');
+      const fileInput = page.locator('header input[type="file"][accept=".json"]');
       await fileInput.setInputFiles(testProfilePath);
 
       // 上書き確認ダイアログが表示されることを確認
@@ -117,7 +118,7 @@ test.describe('Profile Import/Export', () => {
       await expect(page.getByText('プロファイルの上書き確認')).not.toBeVisible();
 
       // プロファイルメニューを開いて、プロファイルが1つだけ存在することを確認
-      await page.click('button:has-text("プロファイル")');
+      await page.click('header button:has-text("プロファイル")');
       const profileItems = page.getByRole('menu').locator('li:has-text("上書きテスト")');
       await expect(profileItems).toHaveCount(1);
     } finally {
@@ -143,11 +144,11 @@ test.describe('Profile Import/Export', () => {
 
     try {
       // インポート
-      await page.click('button:has-text("プロファイル")');
+      await page.click('header button:has-text("プロファイル")');
       await page.getByRole('menuitem', { name: 'インポート' }).click();
 
       // ファイルを選択（.json用のinputを指定）
-      const fileInput = page.locator('input[type="file"][accept=".json"]');
+      const fileInput = page.locator('header input[type="file"][accept=".json"]');
       await fileInput.setInputFiles(testProfilePath);
 
       // 少し待つ
@@ -157,7 +158,7 @@ test.describe('Profile Import/Export', () => {
       await expect(page.getByText('プロファイルの上書き確認')).not.toBeVisible();
 
       // プロファイルがインポートされたことを確認
-      await page.click('button:has-text("プロファイル")');
+      await page.click('header button:has-text("プロファイル")');
       await expect(page.getByRole('menu').getByText('新規インポート')).toBeVisible();
     } finally {
       // クリーンアップ
@@ -188,17 +189,20 @@ test.describe('Profile Import/Export', () => {
 
     try {
       // インポート
-      await page.click('button:has-text("プロファイル")');
+      await page.click('header button:has-text("プロファイル")');
       await page.getByRole('menuitem', { name: 'インポート' }).click();
 
-      const fileInput = page.locator('input[type="file"][accept=".json"]');
+      const fileInput = page.locator('header input[type="file"][accept=".json"]');
       await fileInput.setInputFiles(testProfilePath);
 
       await page.waitForTimeout(500);
 
       // インポート後、プロファイルを読み込む
-      await page.click('button:has-text("プロファイル")');
+      await page.click('header button:has-text("プロファイル")');
       await page.getByRole('menu').getByText('画面反映テスト').click();
+
+      // カラム定義ステップへ移動して確認
+      await goToStep(page, WIZARD_STEPS.columns);
 
       // 画面にソースカラムが表示されることを確認（変換前カラムのカード内）
       await expect(page.getByText('SourceCol1').first()).toBeVisible();
@@ -233,13 +237,16 @@ test.describe('Profile Import/Export', () => {
 
     try {
       // インポート
-      await page.click('button:has-text("プロファイル")');
+      await page.click('header button:has-text("プロファイル")');
       await page.getByRole('menuitem', { name: 'インポート' }).click();
 
-      const fileInput = page.locator('input[type="file"][accept=".json"]');
+      const fileInput = page.locator('header input[type="file"][accept=".json"]');
       await fileInput.setInputFiles(testProfilePath);
 
       await page.waitForTimeout(500);
+
+      // カラム定義ステップへ移動
+      await goToStep(page, WIZARD_STEPS.columns);
 
       // インポート後、自動的に画面にカラムが表示されることを確認
       await expect(page.getByText('AutoSourceCol').first()).toBeVisible();
