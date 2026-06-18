@@ -1,0 +1,17 @@
+{
+  "name": "@csv-mapping-tool/chrome-ext",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@csv-mapping-tool/core": "*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.40"
+  }
+}

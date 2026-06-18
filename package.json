@@ -3,15 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "dev:web": "npm -w packages/web run dev",
+    "dev:ext": "npm -w packages/chrome-ext run dev",
+    "build:web": "npm -w packages/web run build",
+    "build:ext": "npm -w packages/chrome-ext run build",
+    "test": "npm -w packages/web run test",
+    "test:run": "npm -w packages/web run test:run",
+    "test:e2e": "npm -w packages/web run test:e2e",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -24,12 +27,10 @@
     "encoding-japanese": "^2.2.0",
     "papaparse": "^5.5.3",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "shepherd.js": "^14.5.1"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@playwright/test": "^1.57.0",
     "@types/encoding-japanese": "^2.2.1",
     "@types/node": "^24.10.1",
     "@types/papaparse": "^5.5.2",

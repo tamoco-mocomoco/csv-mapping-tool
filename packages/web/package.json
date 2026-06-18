@@ -1,0 +1,22 @@
+{
+  "name": "@csv-mapping-tool/web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
+  },
+  "dependencies": {
+    "@csv-mapping-tool/core": "*",
+    "shepherd.js": "^14.5.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}
